@@ -47,7 +47,7 @@ class must-have {
   }
 
   exec { "download_elasticsearch":
-    command => "curl -L https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz | tar zx --directory=/vagrant/elasticsearch --strip-components 1",
+    command => "curl -s -S -L https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz | tar zx --directory=/vagrant/elasticsearch --strip-components 1",
     cwd => "/vagrant",
     user => "vagrant",
     path => "/usr/bin/:/bin/",
