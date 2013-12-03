@@ -26,6 +26,18 @@ class must-have {
     before => Apt::Ppa["ppa:webupd8team/java"],
   }
 
+  package { 'nginx':
+    ensure => installed,
+    require => Exec['apt-get update 2']
+  }
+ 
+  service { 'nginx':
+    ensure => running,
+    enable => true,
+    hasrestart => true,
+    require => Package['nginx']
+  }
+
   package { "oracle-java7-installer":
     ensure => present,
     require => Exec["apt-get update 2"],
@@ -41,18 +53,26 @@ class must-have {
     logoutput => true,
   }
 
-  file { "/vagrant/elasticsearch":
-    ensure => directory,
-    before => Exec["download_elasticsearch"]
-  }
-
-  exec { "download_elasticsearch":
-    command => "curl -s -S -L https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz | tar zx --directory=/vagrant/elasticsearch --strip-components 1",
-    cwd => "/vagrant",
-    user => "vagrant",
-    path => "/usr/bin/:/bin/",
-    require => Exec["accept_license"],
-    logoutput => true,
+  class { 'elasticsearch':
+    package_url => 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.0.Beta2.deb',
+    config => {
+      'cluster.name' => 'vagrant_elasticsearch',
+      'node.name' => $::ipaddress,
+      'index' => {
+        'number_of_replicas' => '0',
+        'number_of_shards' => '1',
+      },
+      'network' => {
+        'host' => $::ipaddress,
+      },
+      'path' => {
+        'conf' => '/elasticsearch_home/config',
+        'data' => '/elasticsearch_home/data',
+        'work' => '/elasticsearch_home/work',
+        'logs' => '/elasticsearch_home/logs',
+        'plugins' => '/elasticsearch_home/plugins'
+      }
+    }
   }
 }
 
