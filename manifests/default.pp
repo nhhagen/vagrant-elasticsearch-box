@@ -40,7 +40,7 @@ class must-have {
 
   file { '/etc/nginx/nginx.conf':
     ensure => link,
-    source => '/vagrant/kibana/nginx.conf',
+    source => '/vagrant/kibana_config/nginx.conf',
     notify => Service['nginx'],
     require => [ Package['nginx'], Exec['download_kibana'] ]
   }
@@ -56,7 +56,7 @@ class must-have {
 
   file { '/home/vagrant/kibana/src/config.js':
     ensure => link,
-    source => '/vagrant/kibana/config.js',
+    source => '/vagrant/kibana_config/config.js',
     notify => Service['nginx'],
     require => [ Package['nginx'], Exec['download_kibana'] ]
   }
