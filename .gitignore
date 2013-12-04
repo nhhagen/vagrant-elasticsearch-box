@@ -177,3 +177,5 @@ pip-log.txt
 
 elasticsearch
 !modules/elasticsearch
+
+sample_data
