@@ -4,9 +4,6 @@
 [submodule "modules/stdlib"]
 	path = modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
-[submodule "kibana"]
-	path = kibana
-	url = https://github.com/elasticsearch/kibana.git
 [submodule "modules/elasticsearch"]
 	path = modules/elasticsearch
 	url = https://github.com/elasticsearch/puppet-elasticsearch.git
