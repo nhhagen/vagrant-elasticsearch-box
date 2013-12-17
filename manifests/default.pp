@@ -89,14 +89,15 @@ class must-have {
         'host' => $::ipaddress,
       },
       'path' => {
-        'conf' => '/elasticsearch_home/config',
-        'data' => '/vagrant/sample_data',
-        'work' => '/elasticsearch_home/work',
-        'logs' => '/elasticsearch_home/logs',
-        'plugins' => '/elasticsearch_home/plugins'
+        'conf' => '/vagrant/elasticsearch/config',
+        'data' => '/vagrant/elasticsearch/data',
+        'work' => '/vagrant/elasticsearch/work',
+        'logs' => '/vagrant/elasticsearch/logs',
+        'plugins' => '/vagrant/elasticsearch/plugins'
       }
     }
   }
 }
 
 include must-have
+
