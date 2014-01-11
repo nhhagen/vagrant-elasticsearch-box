@@ -6,76 +6,29 @@ define append_if_no_such_line($file, $line, $refreshonly = 'false') {
    }
 }
 
-class must-have {
+class repositories {
   include apt
   apt::ppa { "ppa:webupd8team/java": }
+}
 
-  exec { 'apt-get update':
-    command => '/usr/bin/apt-get update',
-    before => Apt::Ppa["ppa:webupd8team/java"],
-  }
-
-  exec { 'apt-get update 2':
-    command => '/usr/bin/apt-get update',
-    require => [ Apt::Ppa["ppa:webupd8team/java"], Package["git-core"] ],
-  }
-
-  package { ['vim', 'curl', 'git-core', 'bash']:
-    ensure => present,
-    require => Exec['apt-get update'],
-    before => Apt::Ppa['ppa:webupd8team/java'],
-  }
-
-  package { 'nginx':
-    ensure => installed,
-    require => Exec['apt-get update 2']
-  }
- 
-  service { 'nginx':
-    ensure => running,
-    enable => true,
-    hasrestart => true,
-    require => Package['nginx']
-  }
-
-  file { '/etc/nginx/nginx.conf':
-    ensure => link,
-    source => '/vagrant/kibana_config/nginx.conf',
-    notify => Service['nginx'],
-    require => [ Package['nginx'], Exec['download_kibana'] ]
-  }
-
-  exec { 'download_kibana':
-    command => 'git clone https://github.com/elasticsearch/kibana.git',
-    cwd => '/home/vagrant',
-    user => 'vagrant',
-    path => '/usr/bin/:/bin/',
-    require => [ Package['git-core'] ],
-    logoutput => true,
-  }
-
-  file { '/home/vagrant/kibana/src/config.js':
-    ensure => link,
-    source => '/vagrant/kibana_config/config.js',
-    notify => Service['nginx'],
-    require => [ Package['nginx'], Exec['download_kibana'] ]
-  }
-
-  package { 'oracle-java7-installer':
-    ensure => present,
-    require => Exec['apt-get update 2'],
-  }
+class must-have {
+  include apt
 
   exec { "accept_license":
     command => "echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections",
     cwd => "/home/vagrant",
     user => "vagrant",
     path => "/usr/bin/:/bin/",
-    require => Package["curl"],
-    before => Package["oracle-java7-installer"],
     logoutput => true,
-  }
-
+  } ->
+  package { 'oracle-java7-installer':
+    ensure => present,
+  } ->
+  file { '/vagrant/elasticsearch':
+    ensure => directory,
+    owner => 'vagrant',
+    group => 'vagrant',
+  } ->
   class { 'elasticsearch':
     package_url => 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.0.Beta2.deb',
     config => {
@@ -86,18 +39,14 @@ class must-have {
         'number_of_shards' => '1',
       },
       'network' => {
-        'host' => $::ipaddress,
-      },
-      'path' => {
-        'conf' => '/vagrant/elasticsearch/config',
-        'data' => '/vagrant/elasticsearch/data',
-        'work' => '/vagrant/elasticsearch/work',
-        'logs' => '/vagrant/elasticsearch/logs',
-        'plugins' => '/vagrant/elasticsearch/plugins'
+        'host' => '0.0.0.0',
       }
     }
   }
 }
 
+include repositories
 include must-have
+
+Class['repositories'] -> Class['must-have']
 
