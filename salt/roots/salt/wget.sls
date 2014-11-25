@@ -1,0 +1,2 @@
+wget:
+  pkg.installed
