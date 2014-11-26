@@ -2,7 +2,7 @@ base:
   '*':
     - rabbitmq
     - python
-    #- ruby
+    - ruby
     - nodejs
     - jdk7
     - wget
