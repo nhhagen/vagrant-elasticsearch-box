@@ -1,16 +1,18 @@
-node_ppa:
+node-ppa:
   pkgrepo.managed:
     - ppa: chris-lea/node.js
+    - require_in:
+      - pkg: nodejs
 
 nodejs:
   pkg.installed:
-    - pkgrepo: node_ppa
+    - pkgrepo: node-ppa
 
-node_modules:
+node-modules:
   npm.installed:
     - names:
       - grunt-cli
       - supervisor
       - node-inspector
       - forever
-      
+

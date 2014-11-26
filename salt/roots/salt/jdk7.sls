@@ -15,6 +15,8 @@ oracle-ppa:
   pkgrepo.managed:
     - humanname: WebUpd8 Oracle Java PPA repository
     - ppa: webupd8team/java
+    - require_in:
+      - pkg: oracle-java7-installer
 
 oracle-license-select:
   cmd.run:
